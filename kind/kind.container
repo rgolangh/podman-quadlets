@@ -6,8 +6,8 @@ Description=A minimal container
 Image=quay.io/centos/centos:latest
 
 # Use volume and network defined below
-Volume=test.volume:/data
-Network=test.network
+Volume=kind.volume:/data
+Network=kind.network
 
 # In the container we just run sleep
 Exec=sleep 60
