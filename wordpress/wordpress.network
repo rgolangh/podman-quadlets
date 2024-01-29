@@ -1,0 +1,5 @@
+[Unit]
+Description=WordPress Container Network
+
+[Network]
+Label=app=wordpress
