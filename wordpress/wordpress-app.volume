@@ -1,0 +1,5 @@
+[Unit]
+Description=WordPress Container Volume
+
+[Volume]
+Label=app=wordpress
