@@ -1,0 +1,3 @@
+# redpanda_network.network
+[Network]
+Driver=bridge
