@@ -2,6 +2,9 @@
 Description=WordPress Container
 Requires=wordpress-db.service
 
+[Service]
+TimeoutStartSec=900
+
 [Container]
 Label=app=wordpress
 ContainerName=wordpress
