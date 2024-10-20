@@ -4,6 +4,9 @@ Documentation=https://github.com/nextcloud/all-in-one/blob/main/docker-rootless.
 After=local-fs.target
 Requires=podman.socket
 
+[Service]
+TimeoutStartSec=900
+
 [Container]
 ContainerName=nextcloud-aio-mastercontainer
 Image=docker.io/nextcloud/all-in-one:latest
