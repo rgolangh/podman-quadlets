@@ -1,0 +1,5 @@
+[Unit]
+Description=Valkey Container Volume
+
+[Volume]
+Label=app=valkey

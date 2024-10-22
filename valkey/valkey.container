@@ -1,0 +1,14 @@
+[Unit]
+Description=Valkey container
+
+[Container]
+Image=docker.io/valkey/valkey:8
+PublishPort=6379:6379
+User=999
+Volume=valkey.volume:/data
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=local.target
