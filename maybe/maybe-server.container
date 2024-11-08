@@ -4,6 +4,9 @@ Documentation=https://maybe.co
 Requires=podman.socket maybe-db.service
 After=podman.socket maybe-db.service
 
+[Install]
+WantedBy=multi-user.target default.target
+
 [Service]
 Restart=always
 TimeoutStartSec=900
@@ -12,11 +15,12 @@ TimeoutStartSec=900
 ContainerName=maybe-server
 Image=ghcr.io/maybe-finance/maybe:latest
 AutoUpdate=registry
-EnvironmentFile=%h/.config/maybe/.env
 PublishPort=3000:3000
 Network=maybe.network
 Volume=maybe-server:/rails/storage
 Volume=/run/user/1000/podman/podman.sock:/var/run/docker.sock
-
-[Install]
-WantedBy=multi-user.target default.target
+Environment=SECRET_KEY_BASE=maybe
+Environment=DB_HOST=maybe-db
+Environment=POSTGRES_DB=maybe
+Environment=POSTGRES_USER=maybe
+Environment=POSTGRES_PASSWORD=maybe
