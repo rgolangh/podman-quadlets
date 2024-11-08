@@ -1,0 +1,21 @@
+[Unit]
+Description=Maybe Personal Finance Server
+Documentation=https://maybe.co
+Requires=podman.socket maybe-db.service
+After=podman.socket maybe-db.service
+
+[Service]
+Restart=always
+
+[Container]
+ContainerName=maybe-server
+Image=ghcr.io/maybe-finance/maybe:latest
+AutoUpdate=registry
+EnvironmentFile=%h/.config/maybe/.env
+PublishPort=3000:3000
+Network=maybe.network
+Volume=maybe-server:/rails/storage
+Volume=/run/user/1000/podman/podman.sock:/var/run/docker.sock
+
+[Install]
+WantedBy=multi-user.target default.target

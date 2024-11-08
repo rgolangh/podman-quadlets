@@ -1,0 +1,25 @@
+# maybe-db.container
+[Unit]
+Description=Maybe Personal Finance Database
+Documentation=https://maybe.co
+Requires=podman.socket
+
+[Service]
+Restart=always
+
+[Container]
+Image=docker.io/postgres:16
+ContainerName=maybe-db
+EnvironmentFile=%h/.config/maybe/.env
+HealthCmd=pg_isready -U XXX -d XXX
+HealthInterval=5s
+HealthRetries=5
+HealthTimeout=5s
+PublishPort=5432:5432
+Network=maybe.network
+Volume=maybe-db:/var/lib/postgresql/data
+Volume=/run/user/1000/podman/podman.sock:/var/run/docker.sock
+Notify=healthy
+
+[Install]
+WantedBy=multi-user.target
