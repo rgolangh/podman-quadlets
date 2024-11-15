@@ -1,0 +1,13 @@
+[Unit]
+Requires=podman.socket
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+
+[Container]
+Image=custom.build
+

@@ -1,0 +1,3 @@
+From registry.access.redhat.com/ubi9/ubi-micro
+
+RUN ls -la
