@@ -11,4 +11,4 @@ Volume=valkey.volume:/data
 Restart=always
 
 [Install]
-WantedBy=local.target
+WantedBy=default.target
