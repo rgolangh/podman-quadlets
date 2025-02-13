@@ -1,0 +1,13 @@
+[Container]
+Image=docker.io/library/postgres:16
+AutoUpdate=registry
+PublishPort=5432:5432
+Volume=postgresql-data:/var/lib/postgresql/data:Z
+Environment=POSTGRES_PASSWORD=CHANGE_ME
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
+
