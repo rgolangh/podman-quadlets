@@ -1,0 +1,11 @@
+[Service]
+Type=oneshot
+# setup postgresql data dir before starting
+Exec=-mkdir -p %S/postgresql/data
+
+[Container]
+Image=docker.io/alpine
+
+[Install]
+WantedBy=default.target
+
