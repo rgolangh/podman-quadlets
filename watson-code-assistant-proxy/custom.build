@@ -1,0 +1,5 @@
+[Build]
+ImageTag=localhost/local-build
+File=Containerfile
+# this path is for rootless containers
+SetWorkingDirectory=%h/.config/containers/systemd/local-build
