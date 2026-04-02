@@ -1,0 +1,30 @@
+[Unit]
+Description=Pi-hole Container
+After=network.target
+
+[Service]
+Restart=always
+
+[Container]
+Label=app=pihole
+ContainerName=pihole
+Image=docker.io/pihole/pihole:latest
+Network=pihole.network
+Volume=pihole.volume:/etc/pihole:Z
+Volume=pihole-dnsmasq.volume:/etc/dnsmasq.d:Z
+Environment=TZ=UTC
+Environment=WEBPASSWORD=password
+# Web Interface on port 8053
+# Either add an ip to listen on the hosting machine (here 192.168.0.250)
+# or leave empty to listen on all interfaces.
+# To not collide with my system dns service I designated a specific IP
+# on the same interface I have using alias IP
+#   nmcli c modiy 'my-wifi' -ipv4.addresses 192.168.0.250
+PublishPort=192.168.0.250:8053:443
+# DNS Service on standard port 15353
+PublishPort=192.168.0.250:53:53/tcp
+PublishPort=192.168.0.250:53:53/udp
+AutoUpdate=registry
+
+[Install]
+WantedBy=multi-user.target default.target
