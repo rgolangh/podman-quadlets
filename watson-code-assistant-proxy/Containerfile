@@ -1,8 +1,0 @@
-From registry.access.redhat.com/ubi9/ubi-micro
-RUN git clone https://github.com/sshnaidm/wca-code-review-action && \
-    cd wca-code-review-action && \
-    pip install -r proxy-requirements.txt
-export IAM_APIKEY=your_api_key
-python watson_openai_proxy.py
-# or customize the host/port if you like:
-flask --app watson_openai_proxy run --host=0.0.0.0 --port=5555
