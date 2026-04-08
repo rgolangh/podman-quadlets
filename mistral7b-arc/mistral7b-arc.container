@@ -1,0 +1,21 @@
+[Unit]
+Description=Mistral-7B-Instruct SYCL Server (Intel Arc GPU)
+Requires=podman.socket
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+ExecStartPre=-hf download bartowski/Mistral-7B-Instruct-v0.3-GGUF Mistral-7B-Instruct-v0.3-Q4_K_M.gguf --local-dir %h/.cache/huggingface/models
+
+[Container]
+ContainerName=mistral7b-arc
+Image=ghcr.io/ggml-org/llama.cpp:server-intel
+AddDevice=/dev/dri:/dev/dri
+Environment=SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1
+Environment=ZES_ENABLE_SYSMAN=1
+Volume=%h/.cache/huggingface/models:/models:z
+PublishPort=8083:8080
+Exec=--model /models/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf -fa on -ngl 99 -c 4096 --host 0.0.0.0 --port 8080
+
+[Install]
+WantedBy=multi-user.target default.target

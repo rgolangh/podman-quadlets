@@ -1,0 +1,19 @@
+[Unit]
+Description=Gemma-4-E2B Vulkan Server (Intel Arc GPU)
+Requires=podman.socket
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+ExecStartPre=-hf download unsloth/gemma-4-E2B-it-GGUF gemma-4-E2B-it-Q4_0.gguf --local-dir %h/.cache/huggingface/models
+
+[Container]
+ContainerName=gemma4-2b-arc
+Image=ghcr.io/ggml-org/llama.cpp:server-vulkan
+AddDevice=/dev/dri:/dev/dri
+Volume=%h/.cache/huggingface/models:/models:z
+PublishPort=8085:8080
+Exec=--model /models/gemma-4-E2B-it-Q4_0.gguf -ngl 99 -c 16384 --no-mmap --threads 4 --host 0.0.0.0 --port 8080
+
+[Install]
+WantedBy=multi-user.target default.target
