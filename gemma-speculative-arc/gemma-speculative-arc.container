@@ -1,0 +1,23 @@
+[Unit]
+Description=Gemma-4-E2B Speculative Server (Gemma-2-2B Draft)
+Requires=podman.socket
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+# Ensure both models are downloaded
+ExecStartPre=-hf download unsloth/gemma-4-E2B-it-GGUF gemma-4-E2B-it-Q4_0.gguf --local-dir %h/.cache/huggingface/models
+ExecStartPre=-hf download bartowski/gemma-2-2b-it-GGUF gemma-2-2b-it-Q4_K_M.gguf --local-dir %h/.cache/huggingface/models
+
+[Container]
+ContainerName=gemma-speculative-arc
+Image=ghcr.io/ggml-org/llama.cpp:server-vulkan
+AddDevice=/dev/dri:/dev/dri
+Volume=%h/.cache/huggingface/models:/models:z
+PublishPort=8087:8080
+# --model is the 'Large' model, --model-draft is the 'Small' model
+# -ngl 99 offloads the main model, -ngld 99 offloads the draft model to GPU
+Exec=--model /models/gemma-4-E2B-it-Q4_0.gguf --model-draft /models/gemma-2-2b-it-Q4_K_M.gguf -ngl 99 -ngld 99 -c 16384 --no-mmap --threads 4 --cache-type-k q8_0 --cache-type-v q8_0 --host 0.0.0.0 --port 8080
+
+[Install]
+WantedBy=multi-user.target default.target

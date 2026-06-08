@@ -1,0 +1,19 @@
+[Unit]
+Description=Gemma-3-1B Vulkan Server (Intel Arc GPU)
+Requires=podman.socket
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+ExecStartPre=-hf download unsloth/gemma-3-1b-it-GGUF gemma-3-1b-it-Q4_K_M.gguf --local-dir %h/.cache/huggingface/models
+
+[Container]
+ContainerName=gemma3-1b-arc
+Image=ghcr.io/ggml-org/llama.cpp:server-vulkan
+AddDevice=/dev/dri:/dev/dri
+Volume=%h/.cache/huggingface/models:/models:z
+PublishPort=8086:8080
+Exec=--model /models/gemma-3-1b-it-Q4_K_M.gguf -ngl 99 -c 8192 --no-mmap --threads 4 --cache-type-k q8_0 --cache-type-v q8_0 --host 0.0.0.0 --port 8080
+
+[Install]
+WantedBy=multi-user.target default.target
