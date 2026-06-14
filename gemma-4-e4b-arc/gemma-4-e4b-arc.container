@@ -5,15 +5,15 @@ Requires=podman.socket
 [Service]
 Restart=always
 TimeoutStartSec=900
-ExecStartPre=-hf download unsloth/google_gemma-4-E4B-it-GGUF google_gemma-4-E4B-it-Q4_K_M.gguf --local-dir %h/.cache/huggingface/models
+ExecStartPre=-hf download unsloth/gemma-4-E4B-it-GGUF gemma-4-E4B-it-Q4_K_M.gguf --local-dir %h/.cache/huggingface/models
 
 [Container]
 ContainerName=gemma4-e4b-arc
 Image=ghcr.io/ggml-org/llama.cpp:server-vulkan
 AddDevice=/dev/dri:/dev/dri
 Volume=%h/.cache/huggingface/models:/models:z
-PublishPort=8080:8080
-Exec=--model /models/google_gemma-4-E4B-it-Q4_K_M.gguf -ngl 99 -c 16384 --no-mmap --threads 4 --cache-type-k q8_0 --cache-type-v q8_0 --host 0.0.0.0 --port 8080
+PublishPort=8084:8080
+Exec=--model /models/gemma-4-E4B-it-Q4_K_M.gguf -ngl 99 -c 16384 --no-mmap --threads 4 --cache-type-k q8_0 --cache-type-v q8_0 --host 0.0.0.0 --port 8080
 
 [Install]
 WantedBy=multi-user.target default.target

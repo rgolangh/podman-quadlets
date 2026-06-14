@@ -1,0 +1,19 @@
+[Unit]
+Description=Gemma 4 E4B Inference Service (LiteRT-LM)
+After=network-online.target
+Requires=podman.socket gemma-inference-build.service
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+ExecStartPre=-hf download litert-community/gemma-4-E4B-it-litert-lm gemma-4-E4B-it.litertlm --local-dir %h/.cache/huggingface/models
+
+[Container]
+ContainerName=gemma-inference
+Image=localhost/gemma-inference
+AddDevice=/dev/dri:/dev/dri
+Volume=%h/.cache/huggingface/models:/models:z,ro
+PublishPort=8088:8001
+
+[Install]
+WantedBy=multi-user.target default.target

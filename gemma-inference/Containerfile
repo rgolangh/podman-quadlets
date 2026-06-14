@@ -1,0 +1,49 @@
+## Stage 1: Get shared libs from the pip package
+FROM python:3.12-slim-bookworm AS litert-deps
+
+RUN pip install --no-cache-dir litert-lm
+RUN mkdir /litert-libs && \
+    cp /usr/local/lib/python3.12/site-packages/litert_lm/lib*.so /litert-libs/
+
+## Stage 2: Build the final image on Fedora 43 (matches host kernel/drivers)
+FROM fedora:43
+
+RUN dnf install -y --setopt=install_weak_deps=False \
+        curl git nodejs npm libstdc++ vulkan-loader mesa-vulkan-drivers mesa-dri-drivers \
+    && dnf clean all
+
+WORKDIR /app
+
+# Download the litert_lm_main binary and verify checksum
+RUN curl -fSL -o /app/litert_lm_main \
+      https://github.com/google-ai-edge/LiteRT-LM/releases/download/v0.10.1/litert_lm_main.linux_x86_64 \
+    && echo "eaf985504149b4538ab7c8bbf1e8160799e6379c176a0ffce8ca81593869430e  /app/litert_lm_main" | sha256sum -c - \
+    && chmod +x /app/litert_lm_main
+
+# Copy shared libs from pip package
+COPY --from=litert-deps /litert-libs/ /app/libs/
+
+# Install the OpenAI-compatible API server pinned to a known commit
+RUN git clone https://github.com/imertz/litert-lm-api-server.git /app/server \
+    && cd /app/server \
+    && git checkout cfddda41a3807cea61f16d97525ad02758e31fbd \
+    && npm install --omit=dev \
+    && sed -i "s/process.env.API_KEY || 'sk-litert-demo-key'/process.env.API_KEY || ''/" /app/server/server.js \
+    && rm -rf /app/server/.git \
+    && dnf remove -y git && dnf clean all
+
+# Run as non-root user
+RUN useradd -r -s /usr/sbin/nologin -d /app appuser \
+    && chown -R appuser:appuser /app
+USER appuser
+
+ENV PORT=8001
+ENV LITERT_BINARY=/app/litert_lm_main
+ENV LD_LIBRARY_PATH=/app/libs
+ENV MODEL_PATH=/models/gemma-4-E4B-it.litertlm
+ENV BACKEND=gpu
+
+EXPOSE 8001
+
+WORKDIR /app/server
+CMD ["node", "server.js"]

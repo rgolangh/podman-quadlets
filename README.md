@@ -18,12 +18,25 @@ All quadlets share a common pattern:
 - KV cache quantization (`--cache-type-k q8_0 --cache-type-v q8_0`) to reduce VRAM usage
 - OpenAI-compatible API on each quadlet's published port
 
-| Quadlet | Model | Quant | Port | Notes |
-|---|---|---|---|---|
-| `gemma-3-1b-arc` | Gemma 3 1B IT | Q4_K_M | 8086 | Lightweight, 8K context |
-| `gemma-4-e2b-arc` | Gemma 4 E2B IT | Q4_0 | 8085 | 16K context |
-| `gemma-4-e4b-arc` | Gemma 4 E4B IT | Q4_K_M | 8080 | 16K context |
-| `gemma-speculative-arc` | Gemma 4 E2B + Gemma 2 2B draft | Q4_0 / Q4_K_M | 8087 | Speculative decoding for faster generation |
+### gemma-3-1b-arc
+
+Gemma 3 1B IT (Q4_K_M) on port **8086**. Lightweight model with 8K context window.
+
+### gemma-4-e2b-arc
+
+Gemma 4 E2B IT (Q4_0) on port **8085**. 16K context window.
+
+### gemma-4-e4b-arc
+
+Gemma 4 E4B IT (Q4_K_M) on port **8084**. 16K context window. Previously ran on the
+SYCL backend (`server-intel`), switched to Vulkan since benchmarks show it is 53-67%
+faster on Intel Arc.
+
+### gemma-speculative-arc
+
+Gemma 4 E2B (Q4_0) with a Gemma 2 2B (Q4_K_M) draft model on port **8087**.
+Uses speculative decoding — the small draft model proposes tokens that the larger
+model verifies, improving generation speed.
 
 ### Install
 

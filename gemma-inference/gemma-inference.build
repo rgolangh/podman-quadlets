@@ -1,0 +1,5 @@
+[Build]
+ImageTag=localhost/gemma-inference
+File=Containerfile
+# this path is for rootless containers
+SetWorkingDirectory=%h/.config/containers/systemd
